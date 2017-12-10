@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addReminder } from '../actions'
+import { addReminder, deleteReminder } from '../actions'
 
 class App extends Component {
   constructor(props) {
@@ -9,22 +9,50 @@ class App extends Component {
       text: ''
     }
   }
+
   postReminder() {
     console.log(this.state);
     this.props.addReminder(this.state.text);
+  }
+
+  removeReminder(id) {
+    console.log('deleting in application', id);
+    this.props.deleteReminder(id)
+  }
+
+  renderReminders() {
+    const { reminders } = this.props
+    // console.log('reminders', reminders);
+    return(
+      <ul className="list-group col-sm-4">
+        {reminders.map(reminder => {
+          return (
+            <li key={reminder.id} className="list-group-item">
+              <div className="list-item">{reminder.text}</div>
+              <div
+                className="list-item delete-btn"
+                onClick={() => this.removeReminder(reminder.id)}
+                >
+                &#x2715;
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    )
   }
 
   render() {
     return (
       <div className="App">
         <div className="title">
-          My Reminder
+          Don't Forget to...
         </div>
-        <div className="form-inline">
+        <div className="form-inline reminder-form">
           <div className="form-group">
             <input
               className="form-control"
-              placeholder="I have to.."
+              placeholder="what are you thinking?"
               onChange={event => this.setState({text: event.target.value})}
              />
           </div>
@@ -33,12 +61,17 @@ class App extends Component {
             className="btn btn-success"
             onClick={() => this.postReminder()}
             >
-            Add Reminder
+            Add Task
           </button>
         </div>
+        {this.renderReminders()}
       </div>
     )
   }
 }
-
-export default connect(null, { addReminder })(App);
+function mapStateToProps(state) {
+  return {
+    reminders: state
+  }
+}
+export default connect(mapStateToProps, { addReminder, deleteReminder })(App);
