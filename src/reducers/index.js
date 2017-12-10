@@ -4,6 +4,7 @@ import uuid from 'uuid'
 const reminder = (action) => {
   return {
     text: action.text,
+    dueDate: action.dueDate,
     id: uuid()
   }
 }
